@@ -13,7 +13,7 @@ resource "azurerm_resource_group" "public" {
 
 resource "azurerm_virtual_network" "public" {
   name                = "vnet-${var.prefix}"
-  address_space       = ["10.10.0.0/24"]
+  address_space = ["10.10.0.0/24"]
   location            = azurerm_resource_group.public.location
   resource_group_name = azurerm_resource_group.public.name
 }
@@ -22,7 +22,7 @@ resource "azurerm_subnet" "internal" {
   name                 = "subnet-${var.prefix}"
   resource_group_name  = azurerm_resource_group.public.name
   virtual_network_name = azurerm_virtual_network.public.name
-  address_prefixes     = ["10.10.0.0/26"]
+  address_prefixes = ["10.10.0.0/26"]
 }
 
 module "ubuntu_custom_script_extensions" {
@@ -39,4 +39,15 @@ module "ubuntu_custom_script_extensions" {
   os_profile_admin_public_key = file("${path.root}/id_rsa.pub")
   os_profile_admin_username = "razumovsky_r"
   network_security_group_id = azurerm_network_security_group.public.id
+  vm_size                   = "Standard_B2ms"
+}
+
+module "cse_linux" {
+  source                                = "./modules/custom-script-extension-linux"
+  custom_script_extension_absolute_path = ""
+  custom_script_extension_file_name     = ""
+  extension_name                        = ""
+  storage_account_name                  = ""
+  storage_container_name                = ""
+  virtual_machine_id                    = ""
 }
