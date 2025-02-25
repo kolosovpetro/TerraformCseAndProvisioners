@@ -9,13 +9,8 @@ and this project adheres to [Semantic Versioning v2.0.0](https://semver.org/spec
 
 ### Changed
 
-- Update gitignore
-- Commit lock file
-- Move variable from locals
-- Git ignore txt files
-- Git ignore ssh keys
-- Update GitHub actions CI
-- Fix encoding and BOM characters
-- Azure pipelines for terraform
-- Add editorconfig
-- Remove example sas token
+- Implement Azure CSE terraform for linux
+- Implement Azure CSE terraform for windows
+- Implement Terraform Powershell `remote-exec` provisioner for windows
+- Implement Terraform Bash `remote-exec` provisioner for linux
+- Add examples
