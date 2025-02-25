@@ -69,11 +69,31 @@ resource "azurerm_storage_container" "public" {
 #################################################################################################################
 
 module "cse_windows" {
-  source                                = "../../modules/custom-script-extension-windows"
-  custom_script_extension_file_name     = "Configure-WinRM.ps1"
-  custom_script_extension_path          = "${path.root}/scripts/Configure-WinRM.ps1"
-  extension_name                        = "Configure-WinRM"
-  storage_account_name                  = azurerm_storage_account.public.name
-  storage_container_name                = azurerm_storage_container.public.name
-  virtual_machine_id                    = module.windows_vm.id
+  source                            = "../../modules/custom-script-extension-windows"
+  custom_script_extension_file_name = "Configure-WinRM.ps1"
+  custom_script_extension_path      = "${path.root}/scripts/Configure-WinRM.ps1"
+  extension_name                    = "Configure-WinRM"
+  storage_account_name              = azurerm_storage_account.public.name
+  storage_container_name            = azurerm_storage_container.public.name
+  virtual_machine_id                = module.windows_vm.id
+}
+
+#################################################################################################################
+# WINDOWS PROVISIONER
+#################################################################################################################
+
+module "windows_provisioner" {
+  source                       = "../../modules/provisioner-windows"
+  os_profile_admin_password    = trimspace(file("${path.root}/password.txt"))
+  os_profile_admin_username    = "razumovsky_r"
+  provision_script_destination = "C:\\Temp\\Install-Windows-Exporter.ps1"
+  provision_script_path        = "${path.root}/scripts/Install-IIS.ps1"
+  public_ip_address            = module.windows_vm.public_ip
+
+  depends_on = [
+    module.cse_windows,
+    module.windows_vm,
+    azurerm_network_security_rule.allow_win_rm_http,
+    azurerm_network_security_rule.allow_win_rm_https
+  ]
 }
